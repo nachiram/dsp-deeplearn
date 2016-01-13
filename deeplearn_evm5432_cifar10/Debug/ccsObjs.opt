@@ -1,0 +1,1 @@
+"./DSP_add16.obj" "./DSP_dotprod.obj" "./DSP_maxidx.obj" "./DSP_maxval.obj" "./DSP_vec.obj" "./IMG_conv_5x5_i16s_c16s_c.obj" "./boot.obj" "./classifier.obj" "./deep_learning.obj" "./main.obj" "../lnk.cmd" -l"libc.a" 

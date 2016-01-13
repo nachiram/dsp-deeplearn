@@ -1,0 +1,301 @@
+******************************************************************************
+                  TI ARM Linker PC v5.2.6                      
+******************************************************************************
+>> Linked Thu Jan 07 01:48:55 2016
+
+OUTPUT FILE NAME:   <mnist_evm_cpu.out>
+ENTRY POINT SYMBOL: "_c_int00"  address: 40301344
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  OCMC_RAM              40300000   00020000  000029a0  0001d660  RWIX
+  EMIF_CS0_SDRAM        80000000   40000000  00000000  40000000  RWIX
+  EMIF_CS1_SDRAM        c0000000   40000000  00000000  40000000  RWIX
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+40300000    40300000    00001548   00001548    r-x
+  40300000    40300000    00001548   00001548    r-x .text
+40301548    40301548    000013b8   00000000    rw-
+  40301548    40301548    00000800   00000000    rw- .stack
+  40301d48    40301d48    00000800   00000000    rw- .sysmem
+  40302548    40302548    00000290   00000000    rw- .data
+  403027d8    403027d8    00000128   00000000    rw- .bss
+40302900    40302900    000000a0   000000a0    r--
+  40302900    40302900    000000a0   000000a0    r-- .cinit
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.text      0    40300000    00001548     
+                  40300000    00000384     rtsv7A8_A_le_eabi.lib : trgdrv.obj (.text)
+                  40300384    00000334                           : memory.obj (.text)
+                  403006b8    00000214                           : lowlev.obj (.text)
+                  403008cc    000001bc                           : fputs.obj (.text)
+                  40300a88    00000180                           : memcpy32.obj (.text)
+                  40300c08    00000150                           : setvbuf.obj (.text)
+                  40300d58    000000b0                           : fclose.obj (.text)
+                  40300e08    000000b0                           : memset32.obj (.text)
+                  40300eb8    000000a4                           : autoinit.obj (.text)
+                  40300f5c    000000a4                           : trgmsg.obj (.text)
+                  40301000    000000a0                           : _io_perm.obj (.text)
+                  403010a0    000000a0                           : copy_decompress_rle.obj (.text)
+                  40301140    00000084                           : cpy_tbl.obj (.text)
+                  403011c4    00000084                           : fflush.obj (.text)
+                  40301248    00000084                           : fseek.obj (.text)
+                  403012cc    00000078                           : exit.obj (.text)
+                  40301344    00000054                           : boot.obj (.text)
+                  40301398    00000050                           : fopen.obj (.text)
+                  403013e8    00000044                           : strncpy.obj (.text)
+                  4030142c    0000002c                           : memchr.obj (.text)
+                  40301458    00000028                           : strchr.obj (.text)
+                  40301480    00000028                           : strcmp.obj (.text)
+                  403014a8    00000020                           : args_main.obj (.text)
+                  403014c8    0000001c                           : strlen.obj (.text)
+                  403014e4    00000016     hello.obj (.text)
+                  403014fa    00000002     --HOLE-- [fill = 0]
+                  403014fc    00000014     rtsv7A8_A_le_eabi.lib : copy_decompress_none.obj (.text:decompress:none)
+                  40301510    00000014                           : strcpy.obj (.text)
+                  40301524    00000010                           : copy_zero_init.obj (.text:decompress:ZI)
+                  40301534    00000008                           : copy_decompress_rle.obj (.text:decompress:rle24)
+                  4030153c    00000008                           : pre_init.obj (.text)
+                  40301544    00000004                           : _lock.obj (.text)
+
+.stack     0    40301548    00000800     UNINITIALIZED
+                  40301548    00000800     --HOLE--
+
+.bss       0    403027d8    00000128     UNINITIALIZED
+                  403027d8    00000120     rtsv7A8_A_le_eabi.lib : trgmsg.obj (.bss:__CIOBUF_)
+                  403028f8    00000008     (.common:parmbuf$25)
+
+.sysmem    0    40301d48    00000800     UNINITIALIZED
+                  40301d48    00000008     rtsv7A8_A_le_eabi.lib : memory.obj (.sysmem)
+                  40301d50    000007f8     --HOLE--
+
+.data      0    40302548    00000290     UNINITIALIZED
+                  40302548    000001a0     rtsv7A8_A_le_eabi.lib : defs.obj (.data)
+                  403026e8    000000d0                           : lowlev.obj (.data)
+                  403027b8    0000000c                           : memory.obj (.data)
+                  403027c4    00000008                           : _lock.obj (.data)
+                  403027cc    00000008                           : exit.obj (.data)
+                  403027d4    00000004                           : stkdepth_vars.obj (.data)
+
+.cinit     0    40302900    000000a0     
+                  40302900    00000078     (.cinit..data.load) [load image, compression = rle]
+                  40302978    0000000c     (__TI_handler_table)
+                  40302984    00000004     --HOLE-- [fill = 0]
+                  40302988    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  40302990    00000010     (__TI_cinit_table)
+
+.init_array 
+*          0    40300000    00000000     UNINITIALIZED
+
+.TI.persistent 
+*          0    40302548    00000000     UNINITIALIZED
+
+.TI.noinit 
+*          0    403027d8    00000000     UNINITIALIZED
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 40302990 records: 2, size/record: 8, table size: 16
+	.data: load addr=40302900, load size=00000078 bytes, run addr=40302548, run size=00000290 bytes, compression=rle
+	.bss: load addr=40302988, load size=00000008 bytes, run addr=403027d8, run size=00000128 bytes, compression=zero_init
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 40302978 records: 3, size/record: 4, table size: 12
+	index: 0, handler: __TI_zero_init
+	index: 1, handler: __TI_decompress_rle24
+	index: 2, handler: __TI_decompress_none
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                    
+-------   ----                    
+403012cc  C$$EXIT                 
+40300fa4  C$$IO$$                 
+40300088  HOSTclose               
+403001ec  HOSTlseek               
+40300000  HOSTopen                
+403000ec  HOSTread                
+403002e8  HOSTrename              
+40300288  HOSTunlink              
+4030016c  HOSTwrite               
+UNDEFED   SHT$$INIT_ARRAY$$Base   
+UNDEFED   SHT$$INIT_ARRAY$$Limit  
+403027d8  __CIOBUF_               
+40301d48  __STACK_END             
+00000800  __STACK_SIZE            
+00000800  __SYSMEM_SIZE           
+40302990  __TI_CINIT_Base         
+403029a0  __TI_CINIT_Limit        
+40302978  __TI_Handler_Table_Base 
+40302984  __TI_Handler_Table_Limit
+40300eb8  __TI_auto_init          
+40301398  __TI_cleanup            
+403027cc  __TI_cleanup_ptr        
+40300d58  __TI_closefile          
+403014fc  __TI_decompress_none    
+40301534  __TI_decompress_rle24   
+403011c4  __TI_doflush            
+403027d0  __TI_dtors_ptr          
+40302554  __TI_ft_end             
+40300fac  __TI_readmsg            
+40302900  __TI_static_base__      
+40302558  __TI_tmpnams            
+40300f5c  __TI_writemsg           
+40301000  __TI_wrt_ok             
+40301524  __TI_zero_init          
+40300e08  __aeabi_memclr          
+40300e08  __aeabi_memclr4         
+40300e08  __aeabi_memclr8         
+40300a88  __aeabi_memcpy          
+40300a88  __aeabi_memcpy4         
+40300a88  __aeabi_memcpy8         
+40300e0c  __aeabi_memset          
+40300e0c  __aeabi_memset4         
+40300e0c  __aeabi_memset8         
+40302550  __aeabi_stderr          
+40302548  __aeabi_stdin           
+4030254c  __aeabi_stdout          
+ffffffff  __binit__               
+ffffffff  __c_args__              
+40301548  __stack                 
+403014a8  _args_main              
+40301344  _c_int00                
+403025f8  _ftable                 
+403027c4  _lock                   
+40301544  _nop                    
+40301d48  _sys_memory             
+4030153c  _system_pre_init        
+403027c8  _unlock                 
+403012d4  abort                   
+ffffffff  binit                   
+403006b8  close                   
+40301140  copy_in                 
+403012e0  exit                    
+403008cc  fputs                   
+4030047c  free                    
+40301248  fseek                   
+40300878  lseek                   
+403014e4  main                    
+403027d4  main_func_sp            
+403005e4  malloc                  
+4030142c  memchr                  
+40300a88  memcpy                  
+40300e18  memset                  
+40300384  minit                   
+40300a5c  puts                    
+403007f8  remove                  
+40300c08  setvbuf                 
+40301458  strchr                  
+40301480  strcmp                  
+40301510  strcpy                  
+403014c8  strlen                  
+403013e8  strncpy                 
+403007f8  unlink                  
+40300834  write                   
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                    
+-------   ----                    
+00000800  __STACK_SIZE            
+00000800  __SYSMEM_SIZE           
+40300000  HOSTopen                
+40300088  HOSTclose               
+403000ec  HOSTread                
+4030016c  HOSTwrite               
+403001ec  HOSTlseek               
+40300288  HOSTunlink              
+403002e8  HOSTrename              
+40300384  minit                   
+4030047c  free                    
+403005e4  malloc                  
+403006b8  close                   
+403007f8  remove                  
+403007f8  unlink                  
+40300834  write                   
+40300878  lseek                   
+403008cc  fputs                   
+40300a5c  puts                    
+40300a88  __aeabi_memcpy          
+40300a88  __aeabi_memcpy4         
+40300a88  __aeabi_memcpy8         
+40300a88  memcpy                  
+40300c08  setvbuf                 
+40300d58  __TI_closefile          
+40300e08  __aeabi_memclr          
+40300e08  __aeabi_memclr4         
+40300e08  __aeabi_memclr8         
+40300e0c  __aeabi_memset          
+40300e0c  __aeabi_memset4         
+40300e0c  __aeabi_memset8         
+40300e18  memset                  
+40300eb8  __TI_auto_init          
+40300f5c  __TI_writemsg           
+40300fa4  C$$IO$$                 
+40300fac  __TI_readmsg            
+40301000  __TI_wrt_ok             
+40301140  copy_in                 
+403011c4  __TI_doflush            
+40301248  fseek                   
+403012cc  C$$EXIT                 
+403012d4  abort                   
+403012e0  exit                    
+40301344  _c_int00                
+40301398  __TI_cleanup            
+403013e8  strncpy                 
+4030142c  memchr                  
+40301458  strchr                  
+40301480  strcmp                  
+403014a8  _args_main              
+403014c8  strlen                  
+403014e4  main                    
+403014fc  __TI_decompress_none    
+40301510  strcpy                  
+40301524  __TI_zero_init          
+40301534  __TI_decompress_rle24   
+4030153c  _system_pre_init        
+40301544  _nop                    
+40301548  __stack                 
+40301d48  __STACK_END             
+40301d48  _sys_memory             
+40302548  __aeabi_stdin           
+4030254c  __aeabi_stdout          
+40302550  __aeabi_stderr          
+40302554  __TI_ft_end             
+40302558  __TI_tmpnams            
+403025f8  _ftable                 
+403027c4  _lock                   
+403027c8  _unlock                 
+403027cc  __TI_cleanup_ptr        
+403027d0  __TI_dtors_ptr          
+403027d4  main_func_sp            
+403027d8  __CIOBUF_               
+40302900  __TI_static_base__      
+40302978  __TI_Handler_Table_Base 
+40302984  __TI_Handler_Table_Limit
+40302990  __TI_CINIT_Base         
+403029a0  __TI_CINIT_Limit        
+ffffffff  __binit__               
+ffffffff  __c_args__              
+ffffffff  binit                   
+UNDEFED   SHT$$INIT_ARRAY$$Base   
+UNDEFED   SHT$$INIT_ARRAY$$Limit  
+
+[83 symbols]

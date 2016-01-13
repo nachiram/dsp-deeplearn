@@ -1,0 +1,1 @@
+"./hello.obj" "../OMAP5430.cmd" -l"libc.a" 

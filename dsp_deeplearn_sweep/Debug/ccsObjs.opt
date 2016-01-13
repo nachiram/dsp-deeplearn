@@ -1,0 +1,1 @@
+"./DSP_add16.obj" "./DSP_maxval.obj" "./IMG_conv_11x11_i16s_c16s.obj" "./IMG_conv_3x3_i16s_c16s.obj" "./IMG_conv_5x5_i16s_c16s.obj" "./IMG_conv_7x7_i16s_c16s.obj" "./deep_learning.obj" "./main.obj" "../C6678_unified.cmd" -l"libc.a" -l"F:\ti\pdk_C6678_1_1_2_6\packages\ti\csl\lib\ti.csl.ae66" 

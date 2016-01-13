@@ -1,0 +1,427 @@
+/*******************************************************************/ 
+/* This GEL file is loaded on the command line of Code Composer    */
+/* The StartUp() function is called every time you start           */
+/* Code Composer.  You can customize this function to              */
+/* initialize wait states or to perform other initialization.      */
+/*                                                                 */
+/* OMAP5430 cortexA15 reset config  		     				   */
+/*                                                                 */
+/*                                                                 */
+/*  Author: Salamito thomas				     					   */
+/*******************************************************************/
+menuitem "RESET"
+/**********************************************************************
+ *
+ *  FUNCTIONS
+ *
+ **********************************************************************/
+ 
+#define INFO_PRINT								0
+
+ 
+#define CORTEXM4_RTOS_IN_RESET   1
+#define CORTEXM4_SIMCOP_IN_RESET 2
+#define CORTEXM4_RESET_MASK      3
+
+
+Set_MMU()
+{
+	GEL_TextOut("--->>> Set_MMU Cortex M4 <<<---\n");
+
+    /* Boot from DDR - self loop */
+	/* Overwrite reset values for AMMU smallPage0&1 policy registers - 
+	   Setting it for 16K to program L2MMU from GEL scripts */
+		
+	// Configure Ipu to boot from IPU DDR
+	// AMMU Small Page0 XLTE Register
+    *(int*)0x550809A0 = 0x83000000;
+    *(int*)0x55080920 = 0x00000000;
+    *(int*)0x55080A20 = 0x00000005;
+    *(int*)0x550809A4 = 0x55080000;
+    *(int*)0x55080924 = 0x40000000;
+    *(int*)0x55080A24 = 0x00000005;
+	// Branch to itself in IPU DDR - Adding the loop at 0x800 in DDR
+    *(int*)0x83000000 = 0x8300a000;
+	*(int*)0x83000004 = 0x83000801;
+	*(int*)0x83000800 = 0xE7FEE7FE;
+	/* End Boot from IPU L2RAM - self loop */
+   		
+	GEL_TextOut("---<<< Set_MMU Cortex M4 >>>---\n");
+}
+
+hotmenu reset_ipu_cortexM4_RTOS_board()
+{
+	int cortexResetRegister, cortexResetStatus;
+
+	GEL_TextOut(">> START reset_ipu_cortexM4_RTOS board \n");
+
+	cortexResetRegister= *(int*)0x4AE06910;
+      cortexResetStatus = cortexResetRegister & CORTEXM4_RESET_MASK;
+
+if (INFO_PRINT) {          
+      GEL_TextOut("state %d\n",,,,, cortexResetStatus);
+}
+     
+      // both devices in reset
+	if (cortexResetStatus == (CORTEXM4_RTOS_IN_RESET | CORTEXM4_SIMCOP_IN_RESET) )
+	{		
+if (INFO_PRINT) {
+			GEL_TextOut("> IPU CLK CONFIG 1\n");
+}
+    		// Configure Ipu mode into Auto mode
+    		// CORE_CM2:CM_DUCATI_DUCATI_CLKCTRL
+    		*(int*)0x4A008920 = 0x00000001;
+    
+    		// Set force-wakeup domain transition
+    		// CORE_CM2:CM_DUCATI_CLKSTCTRL = SW_WKUP
+    		*(int*)0x4A008900 = 0x00000002;
+    
+    		// Reading 1 : clock is running ir gating/ungating transition is on-going.
+    		while (((*(int*)0x4A008900) & 0x100)& ~0x100);
+
+if (INFO_PRINT) {    		   
+    		GEL_TextOut("< IPU CLOCK CONFIG 2\n");
+}
+	}
+
+      // CORTEXM4_0 in reset
+	if ( (cortexResetStatus & CORTEXM4_RTOS_IN_RESET) != 0 )
+	{         
+		// CORTEXM3_1 in reset
+		if ((cortexResetStatus & CORTEXM4_SIMCOP_IN_RESET)!= 0)
+		{
+if (INFO_PRINT) {
+			GEL_TextOut("> IPU CLOCK CONFIG 3\n");
+            
+            
+              }           
+            
+ 
+   			// Release IPU MMU and Cache interface reset
+			cortexResetRegister= cortexResetRegister& 0xFFFFFFFB;
+   			*(int*)0x4AE06910 = cortexResetRegister;
+ 
+   			// read 4 IPU MMU and Cache interface reset applied
+   			while (((*(int*)0x4AE06914) & 0x4)& ~0x4);
+  
+   			// Reset status cleared
+   			*(int*)0x4AE06914 = 0x00000004;
+ 
+if (INFO_PRINT) {   			           
+            	GEL_TextOut("> IPU CLOCK CONFIG 4\n");
+ }
+ 
+                Set_MMU();
+   		}
+   		
+if (INFO_PRINT) {
+   		   		GEL_TextOut("> IPU CLOCK CONFIG 5\n");
+}      
+
+   
+		// Release IPU CortexM4 RTOS
+		cortexResetRegister= cortexResetRegister& 0xFFFFFFFE;
+   		*(int*)0x4AE06910 = cortexResetRegister;
+   
+   		// wait Ipu CortexM4 RTOS reset applied
+   		while (((*(int*)0x4AE06914) & 0x1)& ~0x1);
+   
+   		// Clear reset status
+   		*(int*)0x4AE06914 = 0x00000001;
+   		
+   // test that module is fully functional 
+   // while (((*(int*)0x4A008920) & 0x30000)& 0x30000)
+	}
+   	GEL_TextOut(">> END reset_ipu_cortexM4_RTOS board \n");
+}
+
+hotmenu reset_ipu_cortexM4_SIMCOP_board()
+{
+	int cortexResetRegister, cortexResetStatus;
+
+	GEL_TextOut(">> START reset_ipu_cortexM4_SIMCOP board\n");
+
+	cortexResetRegister= *(int*)0x4AE06910;
+    cortexResetStatus = cortexResetRegister & CORTEXM4_RESET_MASK;
+
+if (INFO_PRINT) {            
+	GEL_TextOut("state %d\n",,,,, cortexResetStatus );
+}
+
+	if (cortexResetStatus == (CORTEXM4_RTOS_IN_RESET | CORTEXM4_SIMCOP_IN_RESET) )
+	{		
+if (INFO_PRINT) {
+			GEL_TextOut("> IPU CLOCK CONFIG 10 \n");
+}    
+    		// Configure Ipu mode into Auto mode
+    		// CORE_CM2:CM_DUCATI_DUCATI_CLKCTRL
+    		*(int*)0x4A008920 = 0x00000001;
+    
+    		// Set force-wakeup domain transition
+    		// CORE_CM2:CM_DUCATI_CLKSTCTRL = SW_WKUP
+    		*(int*)0x4A008900 = 0x00000002;
+    
+    		// Reading 1 : clock is running ir gating/ungating transition is on-going.
+    		while (((*(int*)0x4A008900) & 0x100)& ~0x100);
+ 
+if (INFO_PRINT) {    		  
+    		GEL_TextOut("< IPU OPP CLOCK CONFIG 11 \n");
+    		}
+	}
+
+	if ((cortexResetStatus & CORTEXM4_SIMCOP_IN_RESET)!= 0)
+	{         
+		if ( (cortexResetStatus & CORTEXM4_RTOS_IN_RESET) != 0 )
+		{
+if (INFO_PRINT) {		
+            GEL_TextOut("> IPU CLOCK CONFIG 12\n");
+}        
+   			// Release IPU MMU and Cache interface reset
+			
+			cortexResetRegister = cortexResetRegister& 0xFFFFFFFB; 	
+   			*(int*)0x4AE06910 = cortexResetRegister;
+ 
+   			// read 4 IPU MMU and Cache interface reset applied
+   			while (((*(int*)0x4AE06914) & 0x4)& ~0x4);
+  
+   			// Reset status cleared
+   			*(int*)0x4AE06914 = 0x00000004;
+            
+            Set_MMU();
+   		}
+ if (INFO_PRINT) {       
+       	GEL_TextOut("> IPU CLOCK CONFIG 13\n");
+ }
+      
+		// Release Ipu CortexM4 SIMCOP
+		cortexResetRegister = cortexResetRegister & 0xFFFFFFFD;
+   		*(int*)0x4AE06910 = cortexResetRegister;
+
+		
+   		// wait Ipu CortexM4 SIMCOP reset applied
+   		while (((*(int*)0x4AE06914) & 0x2)& ~0x2);
+   
+   		// Clear reset status
+   		*(int*)0x4AE06914 = 0x00000002;
+   		
+   // test that module is fully functional 
+   //while (((*(int*)0x4A008920) & 0x30000)& 0x30000);
+    }
+    GEL_TextOut(">> END reset_ipu_cortexM4_SIMCOP board\n");
+}
+
+
+hotmenu reset_miniC64()
+{
+	GEL_TextOut(">> START reset_miniC64  board\n");
+
+if (INFO_PRINT) {	
+	GEL_TextOut("> miniC64 IVA CLOCK CONFIG \n");
+}
+	 // IVAHD WAKEUP (after IVAHD dpll)
+    	// Configure IVAHD and SL2 modules into "Auto" mode
+    	// IVAHD_CM2:CM_IVAHD_IVAHD_CLKCTRL
+    	*(int*)0x4A008F20 = 0x00000001;
+    	// IVAHD_CM2:CM_IVAHD_SL2_CLKCTRL
+    	*(int*)0x4A008F28 = 0x00000001;
+    
+    	// Set Force wakeUp domain transition
+    	// IVAHD_CM2:CM_IVAHD_CLKSTCTRL = SW_WKUP
+    	*(int*)0x4A008F00 = 0x00000002;
+    
+    	// Read1 IVAHD_ROOT_CLK is running or gatng/ungating transition is on-going
+    	while (((*(int*)0x4A008F00) & 0x100)& ~0x100);
+
+    	// configure DPLL_IVA for 466MHz
+    	*(int*)0x4a0041ac = 0x0007591e;
+    	*(int*)0x4a0041b8 = 0x00000005;
+    	*(int*)0x4a0041bc = 0x00000006;
+    	*(int*)0x4a0041a0 = 0x00000007;
+    	while (((*(int*)0x4a0041a4) & 0x1) == 0);	// wait for DPLL to lock
+
+    	// Configure miniC64 mode into Auto mode
+    	// TESLA_CM1:CM_TESLA_TESLA_CLKCTRL
+    	*(int*)0x4A004420 = 0x00000001;    
+    
+    	// Set force-wakeup domain transition
+    	// TESLA_CM1:CM_TESLA_CLKSTCTRL = SW_WKUP
+    	*(int*)0x4A004400 = 0x00000002;
+    
+    	// Reading 1 : clock is running ir gating/ungating transition is on-going.
+    	while (((*(int*)0x4A004400) & 0x100)& ~0x100);
+ 
+if (INFO_PRINT) {    	   
+    	GEL_TextOut("< miniC64 IVA OPP CLOCK CONFIG\n");
+}
+        
+    // release slave port reset for IVA-HD allows SL2 access.
+    *(int*)0x4AE06F10 &= ~(1 << 2); 
+
+    *(int*)0x80000000 = 0;
+    *(int*)0x80000004 = 0;
+    *(int*)0x80000008 = 0;
+    *(int*)0x8000000C = 0;
+    *(int*)0x80000010 = 0;
+    *(int*)0x80000014 = 0;
+    *(int*)0x80000018 = 0;
+    *(int*)0x8000001c = 0;
+    //*(int*)0x80000020 = 0x0FFB0120;
+    //*(int*)0x80000020 = 0x0FFfff12;
+    *(int*)0x80000020 = 0x12;
+    *(int*)0x80000024 = 0x0;
+    *(int*)0x80000028 = 0x0;
+    *(int*)0x8000002C = 0x0;
+    *(int*)0x80000030 = 0x0;
+    *(int*)0x80000034 = 0x0;
+    *(int*)0x80000038 = 0x0;
+
+    // Set miniC64 boot address
+    *(int*)0x4A002304 = 0x80000000;
+    
+    // DSP reset
+    // RM_TESLA_RSTCTRL (MMU and DSP RESET)
+    *(int*)0x4AE06410 = 0x00000000;
+    
+    /* wait miniC64 reset applied */
+   while (((*(int*)0x4AE06414) & 0x0001)& ~0x0001);
+   
+   /* wait slave port reset for IVA-HD reset applied */
+   while (((*(int*)0x4AE06F14) & 0x0004)& ~0x0004);   
+  // Clear reset status 
+  *(int*)0x4AE06F14 = 0x4;
+   
+   /* Read 0x0 : test that module is fully functional */
+   ;while (((*(int*)0x4A004420) & 0x30000)& ~0x30000);
+   
+   GEL_TextOut(">> END reset_miniC64 board\n");
+}
+
+
+hotmenu reset_ivahd_iCont1()
+{
+	GEL_TextOut(">> START reset_ivahd_iCont1_board \n");
+   // iCont1 reset release (release slave port reset)
+
+  // *(int*)0x4AE06F10 &= ~(1 << 2); 
+
+  // Write data to iCont1 ITM
+
+  *(int*)0x5A008000 = 0x0;
+
+  *(int*)0x5A008004 = 0x0;
+
+  *(int*)0x5A008008 = 0x0;
+
+  *(int*)0x5A00800C = 0x0;
+
+  *(int*)0x5A008010 = 0xEAFFFFFE;
+
+  // Release iCont1 reset
+
+  *(int*)0x4AE06F10 &= ~(1 << 0);
+
+ 
+   /* wait iCont1 reset applied */
+   while (((*(int*)0x4AE06F14) & 0x0001)& ~0x0001);
+   
+  // Clear reset status 
+  *(int*)0x4AE06F14 = 0x1;
+      
+   /* Read 0x0 : test that IVAHD is fully functional */
+   // while (((*(int*)0x4A008F20) & 0x30000)& ~0x30000);
+   
+   /* Read 0x0 : test that SL2 is fully functional */
+   //while (((*(int*)0x4A008F28) & 0x30000)& ~0x30000);
+   
+   
+   GEL_TextOut(">> END reset_ivahd_iCont1_board \n");
+}
+
+hotmenu reset_ivahd_iCont2()
+{
+	GEL_TextOut(">> START reset_ivahd_iCont2_board \n");
+    
+// iCont2 reset release (release slave port reset)
+
+  // *(int*)0x4AE06F10 &= ~(1 << 2); 
+
+  // Write data to iCont2 ITM
+
+  *(int*)0x5A018000 = 0x0;
+
+  *(int*)0x5A018004 = 0x0;
+
+  *(int*)0x5A018008 = 0x0;
+
+  *(int*)0x5A01800C = 0x0;
+
+  *(int*)0x5A018010 = 0xEAFFFFFE;
+
+  // Release iCont2 reset
+
+  *(int*)0x4AE06F10 &= ~(1 << 1);
+
+    /* wait iCont2 reset applied */
+   while (((*(int*)0x4AE06F14) & 0x0002)& ~0x0002);
+ 
+  // Clear reset status 
+
+  *(int*)0x4AE06F14 = 0x2;
+
+   /* Read 0x0 : test that IVAHD is fully functional */
+   // while (((*(int*)0x4A008F20) & 0x30000)& ~0x30000);
+   
+   /* Read 0x0 : test that SL2 is fully functional */
+   // while (((*(int*)0x4A008F28) & 0x30000)& ~0x30000);
+   
+   GEL_TextOut(">> END reset_ivahd_iCont2_board \n");
+}
+
+reset_ipu_cortexM4_RTOS()
+{
+	int register1;
+	
+	GEL_TextOut(">> START reset_ipu_cortexM4_RTOS \n");
+       
+   // Release Ipu MMU and Cache interface reset
+   *(int*)0x4AE06910 = 0x00000003;
+ 
+   // read 4 Ipu MMU and Cache interface reset applied
+   while (((*(int*)0x4AE06914) & 0x4)& ~0x4);
+  
+   // Reset status cleared
+   *(int*)0x4AE06914 = 0x00000004;
+   
+   // Release Ipu CortexM4 RTOS (CortexM4 SIMCOP must be released by CortexM4 RTOS)
+   *(int*)0x4AE06910 = 0x00000002;
+   
+   // wait ipu CortexM4 RTOS reset applied
+   while (((*(int*)0x4AE06914) & 0x1)& ~0x1);
+   
+   // Clear reset status
+   *(int*)0x4AE06914 = 0x00000001;
+   
+   // test that module is fully functional 
+   // while (((*(int*)0x4A008920) & 0x30000)& 0x30000);
+    
+   GEL_TextOut(">> END reset_ipu_cortexM4_RTOS \n");
+}
+
+reset_ipu_cortexM4_SIMCOP()
+{
+	GEL_TextOut(">> START reset_ipu_cortexM4_SIMCOP (must be done after CortexM4_RTOS out of reset \n");
+        
+   // Release Ipu CortexM4 SIMCOP
+   *(int*)0x4AE06910 = 0x00000000;
+
+   // wait Ipu CortexM4 SIMCOP reset applied
+   while (((*(int*)0x4AE06914) & 0x2)& ~0x2);
+   
+   // Clear reset status
+   *(int*)0x4AE06914 = 0x00000002;
+   
+   // test that module is fully functional 
+   //while (((*(int*)0x4A008920) & 0x30000)& 0x30000);
+    
+   GEL_TextOut(">> END reset_ipu_cortexM4_SIMCOP \n");
+}

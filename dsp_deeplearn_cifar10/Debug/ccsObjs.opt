@@ -1,0 +1,1 @@
+"./DSPF_sp_dotprod.obj" "./DSPF_sp_maxval.obj" "./DSPF_sp_vec.obj" "./DSP_add16.obj" "./DSP_add32.obj" "./DSP_maxval.obj" "./IMG_conv_11x11_i16s_c16s.obj" "./IMG_conv_5x5_i16s_c16s.obj" "./IMG_conv_7x7_i16s_c16s.obj" "./classifier.obj" "./deep_learning.obj" "./main.obj" "../C6678_unified.cmd" -l"libc.a" -l"F:\ti\pdk_C6678_1_1_2_6\packages\ti\csl\lib\ti.csl.ae66" 
